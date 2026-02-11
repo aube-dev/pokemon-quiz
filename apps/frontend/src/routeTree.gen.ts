@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as QuizListRouteImport } from './routes/quiz/list'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuizListRoute = QuizListRouteImport.update({
+  id: '/quiz/list',
+  path: '/quiz/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login'
+  fullPaths: '/login' | '/quiz/list'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login'
-  id: '__root__' | '/login'
+  to: '/login' | '/quiz/list'
+  id: '__root__' | '/login' | '/quiz/list'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
+  QuizListRoute: typeof QuizListRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quiz/list': {
+      id: '/quiz/list'
+      path: '/quiz/list'
+      fullPath: '/quiz/list'
+      preLoaderRoute: typeof QuizListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
+  QuizListRoute: QuizListRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
