@@ -53,7 +53,7 @@ apps/backend/
 | :--- | :--- | :--- | :--- |
 | **사용자** | `POST` | `/api/users/login` | SN 기반 로그인 및 자동 가입 |
 | | `GET` | `/api/users/me` | 현재 로그인한 사용자 정보 및 토큰 갱신 |
-| | `GET` | `/api/users/leaderboard` | 전체 랭킹 조회 |
+| **리더보드** | `GET` | `/api/leaderboard` | 전체 랭킹 조회 |
 | **문제** | `GET` | `/api/problems` | 모든 문제 목록 조회 (요약) |
 | | `GET` | `/api/problems/:id` | 특정 문제의 상세 정보 조회 |
 | | `PATCH` | `/api/problems/number/:number/challenge` | 문제 도전 시작 (UUID 반환) |
