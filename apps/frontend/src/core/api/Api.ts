@@ -39,6 +39,7 @@ interface ApiOptions<TServerError> {
       error: ApiError<TServerError>,
     ) => ApiError<TServerError>;
   };
+  baseUrl?: string;
 }
 
 export class Api<TServerError> {
@@ -71,6 +72,7 @@ export class Api<TServerError> {
     const { searchParams, headers, body } = request(variables);
 
     const url =
+      (this.options?.baseUrl ?? "") +
       (typeof endpoint === "function" ? endpoint(variables) : endpoint) +
       qs.stringify(searchParams, {
         arrayFormat: "repeat",
