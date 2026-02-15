@@ -9,9 +9,12 @@ export const Route = createFileRoute("/quiz/$quizId/")({
 
 function RouteComponent() {
   return (
-    <div className="px-4 py-8 flex flex-col gap-12">
-      <div className="flex justify-center items-center size-12 border rounded-md">
-        <h1 className="text-2xl font-semibold">1</h1>
+    <div className="px-4 py-8 flex flex-col gap-12 relative">
+      <div className="flex flex-col items-center justify-center relative">
+        <img src="/quiz-header.jpg" className="w-48" />
+        <div className="flex justify-center items-center size-12 border rounded-md absolute backdrop-blur-xs">
+          <h1 className="text-xl font-semibold">27</h1>
+        </div>
       </div>
       <QuizQuestion
         blocks={[
