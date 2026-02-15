@@ -21,46 +21,53 @@ function RouteComponent() {
   });
 
   return (
-    <div className="flex flex-col items-center gap-12 p-4">
-      <div className="flex flex-col items-center gap-4">
-        <img src="/main-logo.jpg" className="size-60" />
+    <div className="flex flex-col items-center gap-8 px-8 py-4">
+      <div className="flex flex-col items-center justify-center relative gap-2">
+        <img src="/login-header.jpg" />
+        {/* <div className="flex justify-center items-center px-4 py-2 border rounded-md absolute backdrop-blur-xs">
+          <h1 className="text-xl font-semibold">POKEMON QUIZ</h1>
+        </div> */}
       </div>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-row items-center gap-4">
-          <div className="flex flex-row items-center gap-1">
-            <Input
-              placeholder="생활관 번호"
-              className="text-sm"
-              value={info.roomNumber}
-              onChange={(e) => {
-                setInfo((prev) => ({ ...prev, roomNumber: e.target.value }));
-              }}
-            />
-            <Label className="shrink-0">생활관</Label>
-          </div>
-        </div>
-        <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-          <Label>닉네임</Label>
+      <div className="self-stretch flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label className="shrink-0">생활관</Label>
           <Input
+            placeholder="생활관"
             className="text-sm"
-            placeholder="닉네임"
-            value={info.nickname}
+            value={info.roomNumber}
             onChange={(e) => {
-              setInfo((prev) => ({ ...prev, nickname: e.target.value }));
+              setInfo((prev) => ({ ...prev, roomNumber: e.target.value }));
             }}
           />
-          <Label>군번</Label>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label className="shrink-0">군번</Label>
           <Input
-            className="text-sm"
             placeholder="군번"
+            className="text-sm"
             value={info.sn}
             onChange={(e) => {
               setInfo((prev) => ({ ...prev, sn: e.target.value }));
             }}
           />
+          <span className="text-xs text-muted-foreground">
+            군번은 가점 지급 대상자 식별 외 다른 용도로 사용되지 않으며, 가점
+            지급 명단 확정 직후 폐기됩니다.
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label className="shrink-0">닉네임</Label>
+          <Input
+            placeholder="닉네임"
+            className="text-sm"
+            value={info.nickname}
+            onChange={(e) => {
+              setInfo((prev) => ({ ...prev, nickname: e.target.value }));
+            }}
+          />
         </div>
         <Button disabled={!info.roomNumber || !info.nickname || !info.sn}>
-          <LogIn /> 로그인
+          <LogIn /> 퀴즈 시작
         </Button>
       </div>
     </div>

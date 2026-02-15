@@ -15,7 +15,7 @@ const QuizListItem = ({
   score,
 }: QuizListItemProps) => {
   return (
-    <div className="py-2 px-3 rounded-sm bg-accent border flex flex-row gap-4 items-center justify-between">
+    <div className="py-2 px-3 rounded-sm backdrop-blur-sm border flex flex-row gap-4 items-center justify-between">
       <div className="size-8 rounded-sm border flex justify-center items-center">
         <span className="font-semibold">{number}</span>
       </div>
