@@ -27,6 +27,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@pokemon-quiz/interface": "workspace:*",
     "@tanstack/router-plugin": "^1.158.4",
     "@types/node": "^25.2.2",
     "@types/react": "^19.2.13",

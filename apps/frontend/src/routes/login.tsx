@@ -38,7 +38,6 @@ function RouteComponent() {
         <div className="flex flex-row items-center gap-4">
           <div className="flex flex-row items-center gap-1">
             <Input
-              type="number"
               placeholder="생활관 번호"
               className="text-sm"
               value={info.roomNumber}

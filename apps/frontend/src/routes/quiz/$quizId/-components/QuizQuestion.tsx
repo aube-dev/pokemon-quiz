@@ -1,32 +1,24 @@
 import type {
-  QuizQuestionBlock,
-  QuizQuestionBlockAudio,
-  QuizQuestionBlockImage,
-  QuizQuestionBlockText,
-  QuizQuestionBlockYoutube,
-} from "@/types/quiz";
+  QuizBlock,
+  QuizBlockAudio,
+  QuizBlockImage,
+  QuizBlockText,
+  QuizBlockYoutube,
+} from "@pokemon-quiz/interface";
 
 interface QuizQuestionProps {
-  questionBlocks: QuizQuestionBlock[];
+  blocks: QuizBlock[];
 }
 
-const QuizQuestionTextBlock = ({ block }: { block: QuizQuestionBlockText }) => {
+const QuizQuestionTextBlock = ({ block }: { block: QuizBlockText }) => {
   return <span className="text-base break-all">{block.content}</span>;
 };
 
-const QuizQuestionImageBlock = ({
-  block,
-}: {
-  block: QuizQuestionBlockImage;
-}) => {
+const QuizQuestionImageBlock = ({ block }: { block: QuizBlockImage }) => {
   return <img src={block.imageUrl} />;
 };
 
-const QuizQuestionYoutubeBlock = ({
-  block,
-}: {
-  block: QuizQuestionBlockYoutube;
-}) => {
+const QuizQuestionYoutubeBlock = ({ block }: { block: QuizBlockYoutube }) => {
   return (
     <iframe
       width="560"
@@ -41,18 +33,14 @@ const QuizQuestionYoutubeBlock = ({
   );
 };
 
-const QuizQuestionAudioBlock = ({
-  block,
-}: {
-  block: QuizQuestionBlockAudio;
-}) => {
+const QuizQuestionAudioBlock = ({ block }: { block: QuizBlockAudio }) => {
   return <audio src={block.audioUrl} controls></audio>;
 };
 
-const QuizQuestion = ({ questionBlocks }: QuizQuestionProps) => {
+const QuizQuestion = ({ blocks }: QuizQuestionProps) => {
   return (
     <div className="flex flex-col gap-4">
-      {questionBlocks.map((block) => {
+      {blocks.map((block) => {
         switch (block.type) {
           case "text":
             return <QuizQuestionTextBlock key={block.id} block={block} />;
