@@ -40,6 +40,7 @@ interface ApiOptions<TServerError> {
     ) => ApiError<TServerError>;
   };
   baseUrl?: string;
+  fetchOptions?: RequestInit;
 }
 
 export class Api<TServerError> {
@@ -86,9 +87,13 @@ export class Api<TServerError> {
       {
         method,
         headers: {
-          "Content-Type": isFormData
-            ? "multipart/form-data"
-            : "application/json",
+          ...(body
+            ? {
+                "Content-Type": isFormData
+                  ? "multipart/form-data"
+                  : "application/json",
+              }
+            : undefined),
           ...headers,
         },
         body: isFormData ? body : JSON.stringify(body),
@@ -107,6 +112,7 @@ export class Api<TServerError> {
 
     const finalOptions = {
       ...baseOptions,
+      ...this.options?.fetchOptions,
       ...(typeof fetchOptions === "function"
         ? fetchOptions(variables)
         : fetchOptions),
