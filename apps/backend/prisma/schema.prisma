@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,25 +7,53 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  nickname  String?
-  scores    Score[]
-  createdAt DateTime @default(now())
+  id           String        @id @default(uuid())
+  sn           String        @unique @map("sn")
+  username     String?       @map("username")
+  totalScore   Int           @default(0) @map("total_score")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  userProblems UserProblem[]
+
+  @@index([totalScore(sort: Desc)])
+  @@map("users")
 }
 
-model Pokemon {
-  id       Int     @id
-  name     String
-  type1    String
-  type2    String?
-  imageUrl String
+model Problem {
+  id           String        @id @default(uuid())
+  number       Int           @unique @default(autoincrement()) @map("problem_number")
+  title        String        @map("title")
+  category     String        @map("category")
+  score        Int           @map("score")
+  content      Json          @map("data")
+  answer       Int           @map("answer")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  userProblems UserProblem[]
+
+  @@map("problems")
 }
 
-model Score {
-  id        Int      @id @default(autoincrement())
-  score     Int
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+model UserProblem {
+  id           String          @id @default(uuid())
+  userId       String          @map("user_id")
+  problemId    String          @map("problem_id")
+  status       ChallengeStatus @map("status")
+  score        Int             @map("score")
+  submittedAt  DateTime        @default(now()) @map("submitted_at")
+  challengedAt DateTime?       @map("challenged_at")
+  problem      Problem         @relation(fields: [problemId], references: [id])
+  user         User            @relation(fields: [userId], references: [id])
+
+  @@unique([userId, problemId])
+  @@map("user_problems")
+}
+
+enum ChallengeStatus {
+  CORRECT
+  WRONG
+  GIVEN_UP
+  CHALLENGING
+
+  @@map("challenge_status")
 }
