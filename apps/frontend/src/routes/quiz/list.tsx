@@ -1,12 +1,23 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute } from "@tanstack/react-router";
 import { QuizListItem } from "./-components/QuizListItem";
+import { useQuery } from "@tanstack/react-query";
+import { api_getProblems } from "@/apis/problems";
+import { Reorder } from "motion/react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/quiz/list")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { data: problems } = useQuery({
+    ...api_getProblems.queryOptions(null),
+    refetchInterval: 1000 * 5,
+  });
+
+  const [tab, setTab] = useState<"default" | "score">("default");
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center justify-start relative">
@@ -18,58 +29,41 @@ function RouteComponent() {
           <h1 className="text-xl font-semibold">퀴즈 리스트</h1>
         </div>
       </div>
-      <Tabs defaultValue="default" className="p-4">
-        <TabsList>
-          <TabsTrigger value="default">번호순</TabsTrigger>
-          <TabsTrigger value="score">배점순</TabsTrigger>
-        </TabsList>
-        <TabsContent value="default" className="flex flex-col gap-2">
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-        </TabsContent>
-        <TabsContent value="score" className="flex flex-col gap-2">
-          <QuizListItem
-            number={1}
-            tags={["BGM"]}
-            questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
-            score={4.51}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="flex flex-col">
+        <Tabs
+          className="px-4"
+          value={tab}
+          onValueChange={(newValue) => {
+            setTab(newValue as "default" | "score");
+          }}
+        >
+          <TabsList>
+            <TabsTrigger value="default">번호순</TabsTrigger>
+            <TabsTrigger value="score">배점순</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Reorder.Group
+          axis="y"
+          as="div"
+          values={problems?.map((problem) => problem.number) ?? []}
+          onReorder={() => {}}
+          className="p-4 flex flex-col gap-2"
+        >
+          {[...(problems ?? [])]
+            .sort((a, b) =>
+              tab === "score" ? a.score - b.score : a.number - b.number,
+            )
+            .map((problem) => (
+              <QuizListItem
+                key={problem.number}
+                number={problem.number}
+                tags={[problem.tag]}
+                questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
+                score={problem.score}
+              />
+            ))}
+        </Reorder.Group>
+      </div>
     </div>
   );
 }

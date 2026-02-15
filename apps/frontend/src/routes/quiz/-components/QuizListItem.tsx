@@ -1,8 +1,12 @@
+import { api_challengeProblem } from "@/apis/problems";
+import { AsyncButton } from "@/components/AsyncButton";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import type { ProblemNumber } from "@/types/problems";
+import { useNavigate } from "@tanstack/react-router";
+import { Reorder } from "motion/react";
 
 interface QuizListItemProps {
-  number: number;
+  number: ProblemNumber;
   tags: string[];
   questionPreview: string;
   score: number;
@@ -14,8 +18,21 @@ const QuizListItem = ({
   questionPreview,
   score,
 }: QuizListItemProps) => {
+  const navigate = useNavigate();
+
+  const challengeMutation = api_challengeProblem.useMutation({
+    onSuccess: (response) => {
+      navigate({ to: "/quiz/$quizId", params: { quizId: response.problemId } });
+    },
+  });
+
   return (
-    <div className="py-2 px-3 rounded-sm backdrop-blur-sm border flex flex-row gap-4 items-center justify-between">
+    <Reorder.Item
+      as="div"
+      value={number}
+      dragListener={false}
+      className="py-2 px-3 rounded-sm backdrop-blur-sm border flex flex-row gap-4 items-center justify-between"
+    >
       <div className="size-8 rounded-sm border flex justify-center items-center">
         <span className="font-semibold">{number}</span>
       </div>
@@ -32,8 +49,14 @@ const QuizListItem = ({
           현재 배점 <strong>{score}</strong>점
         </span>
       </div>
-      <Button>도전</Button>
-    </div>
+      <AsyncButton
+        onClick={async () => {
+          await challengeMutation.mutateAsync({ number });
+        }}
+      >
+        도전
+      </AsyncButton>
+    </Reorder.Item>
   );
 };
 

@@ -9,7 +9,9 @@ import type {
 } from "@pokemon-quiz/interface";
 
 interface QuizAnswerProps {
-  answers: { id: string; blocks: QuizBlock[] }[];
+  answers: { number: number; blocks: QuizBlock[] }[];
+  answerNumber?: number;
+  onAnswerChange?: (answerNumber: number) => void;
 }
 
 const QuizAnswerTextBlock = ({ block }: { block: QuizBlockText }) => {
@@ -39,32 +41,46 @@ const QuizAnswerAudioBlock = ({ block }: { block: QuizBlockAudio }) => {
   return <audio src={block.audioUrl} controls></audio>;
 };
 
-const QuizAnswer = ({ answers }: QuizAnswerProps) => {
+const QuizAnswer = ({
+  answers,
+  answerNumber,
+  onAnswerChange,
+}: QuizAnswerProps) => {
   return (
-    <RadioGroup>
+    <RadioGroup
+      value={answerNumber?.toString() ?? ""}
+      onValueChange={(newValue) => {
+        onAnswerChange?.(Number(newValue));
+      }}
+    >
       <div className="flex flex-col gap-8">
         {answers.map((answer) => (
-          <div key={answer.id} className="flex flex-row items-center gap-2">
-            <RadioGroupItem value={answer.id} id={answer.id} />
+          <div key={answer.number} className="flex flex-row items-center gap-2">
+            <RadioGroupItem
+              value={answer.number.toString()}
+              id={answer.number.toString()}
+            />
             <Label
-              htmlFor={answer.id}
+              htmlFor={answer.number.toString()}
               className="font-normal text-base flex flex-col items-start"
             >
-              {answer.blocks.map((block) => {
+              {answer.blocks.map((block, blockIndex) => {
                 switch (block.type) {
                   case "text":
-                    return <QuizAnswerTextBlock key={block.id} block={block} />;
+                    return (
+                      <QuizAnswerTextBlock key={blockIndex} block={block} />
+                    );
                   case "image":
                     return (
-                      <QuizAnswerImageBlock key={block.id} block={block} />
+                      <QuizAnswerImageBlock key={blockIndex} block={block} />
                     );
                   case "youtube":
                     return (
-                      <QuizAnswerYoutubeBlock key={block.id} block={block} />
+                      <QuizAnswerYoutubeBlock key={blockIndex} block={block} />
                     );
                   case "audio":
                     return (
-                      <QuizAnswerAudioBlock key={block.id} block={block} />
+                      <QuizAnswerAudioBlock key={blockIndex} block={block} />
                     );
                   default:
                     return null;
