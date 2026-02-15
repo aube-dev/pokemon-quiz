@@ -9,27 +9,87 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as QuizListRouteImport } from './routes/quiz/list'
+import { Route as QuizQuizIdIndexRouteImport } from './routes/quiz/$quizId/index'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizListRoute = QuizListRouteImport.update({
+  id: '/quiz/list',
+  path: '/quiz/list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizQuizIdIndexRoute = QuizQuizIdIndexRouteImport.update({
+  id: '/quiz/$quizId/',
+  path: '/quiz/$quizId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
+  '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
+}
+export interface FileRoutesByTo {
+  '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
+  '/quiz/$quizId': typeof QuizQuizIdIndexRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/login': typeof LoginRoute
+  '/quiz/list': typeof QuizListRoute
+  '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/login' | '/quiz/list' | '/quiz/$quizId/'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/login' | '/quiz/list' | '/quiz/$quizId'
+  id: '__root__' | '/login' | '/quiz/list' | '/quiz/$quizId/'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  LoginRoute: typeof LoginRoute
+  QuizListRoute: typeof QuizListRoute
+  QuizQuizIdIndexRoute: typeof QuizQuizIdIndexRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz/list': {
+      id: '/quiz/list'
+      path: '/quiz/list'
+      fullPath: '/quiz/list'
+      preLoaderRoute: typeof QuizListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz/$quizId/': {
+      id: '/quiz/$quizId/'
+      path: '/quiz/$quizId'
+      fullPath: '/quiz/$quizId/'
+      preLoaderRoute: typeof QuizQuizIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  LoginRoute: LoginRoute,
+  QuizListRoute: QuizListRoute,
+  QuizQuizIdIndexRoute: QuizQuizIdIndexRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
