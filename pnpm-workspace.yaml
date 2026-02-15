@@ -1,4 +1,10 @@
 packages:
-  - "apps/frontend"
-  - "apps/backend"
-  - "packages/interface"
+  - apps/frontend
+  - apps/backend
+  - packages/interface
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - msw
+  - prisma
