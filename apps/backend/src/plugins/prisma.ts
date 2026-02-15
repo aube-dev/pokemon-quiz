@@ -1,8 +1,9 @@
 import fp from 'fastify-plugin'
-import { PrismaClient } from '@prisma/client'
 import { FastifyPluginAsync } from 'fastify'
+import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
-// Use declaration merging to add types to the Fastify instance
 declare module 'fastify' {
     interface FastifyInstance {
         prisma: PrismaClient
@@ -10,17 +11,27 @@ declare module 'fastify' {
 }
 
 const prismaPlugin: FastifyPluginAsync = fp(async (server) => {
+    // Create connection pool for Prisma adapter
+    const pool = new Pool({
+        connectionString: process.env.DATABASE_URL!,
+    })
+
+    const adapter = new PrismaPg(pool)
+
     const prisma = new PrismaClient({
-        log: ['error', 'warn'],
+        adapter,
+        log: process.env.NODE_ENV === 'development'
+            ? ['query', 'error', 'warn']
+            : ['error'],
     })
 
     await prisma.$connect()
 
-    // Make prisma available on the fastify instance
     server.decorate('prisma', prisma)
 
-    server.addHook('onClose', async (server) => {
-        await server.prisma.$disconnect()
+    server.addHook('onClose', async (instance) => {
+        await instance.prisma.$disconnect()
+        await pool.end()
     })
 })
 

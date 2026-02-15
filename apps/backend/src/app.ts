@@ -1,27 +1,133 @@
-import { join } from 'path';
-import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
-import { FastifyPluginAsync, FastifyServerOptions } from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify'
+import fastifySwagger from '@fastify/swagger'
+import fastifyScalar from '@scalar/fastify-api-reference'
+import fastifyCors from '@fastify/cors'
+import fastifyCookie from '@fastify/cookie'
+import prismaPlugin from './plugins/prisma'
+import supabasePlugin from './plugins/supabase'
+import jwtPlugin from './plugins/jwt'
+import userRoutes from './routes/users'
+import problemRoutes from './routes/problems'
 
-export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {
-}
-
-const options: AppOptions = {
-}
-
-const app: FastifyPluginAsync<AppOptions> = async (
-    fastify,
-    opts
-): Promise<void> => {
-    void fastify.register(AutoLoad, {
-        dir: join(__dirname, 'plugins'),
-        options: opts
+export async function buildApp(): Promise<FastifyInstance> {
+    const app = Fastify({
+        logger: process.env.NODE_ENV === 'development' ? {
+            level: 'debug',
+            transport: {
+                target: 'pino-pretty',
+                options: {
+                    translateTime: 'HH:MM:ss Z',
+                    ignore: 'pid,hostname',
+                    colorize: true,
+                },
+            },
+        } : true,
     })
 
-    void fastify.register(AutoLoad, {
-        dir: join(__dirname, 'routes'),
-        options: opts
+    // Swagger 설정 (OpenAPI 문서 생성)
+    await app.register(fastifySwagger, {
+        openapi: {
+            info: {
+                title: '포동포동 퀴즈 API',
+                description: '포동포동 퀴즈를 위한 API 문서',
+                version: '1.0.0',
+            },
+            servers: [
+                {
+                    url: 'http://localhost:3000',
+                    description: '개발 서버',
+                },
+            ],
+            tags: [
+                { name: 'users', description: '사용자 관련 엔드포인트' },
+                { name: 'problems', description: '문제 관련 엔드포인트' },
+                { name: 'health', description: '헬스 체크 엔드포인트' },
+            ],
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: 'http',
+                        scheme: 'bearer',
+                        bearerFormat: 'JWT',
+                    },
+                },
+            },
+        },
     })
-};
 
-export default app;
-export { app, options }
+    // Scalar API Reference UI 설정
+    await app.register(fastifyScalar, {
+        routePrefix: '/docs',
+        configuration: {
+            theme: 'purple',
+            darkMode: true,
+        },
+    })
+
+    // CORS 설정
+    await app.register(fastifyCors, {
+        origin: true, // 모든 origin 허용 (개발 단계)
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    })
+
+    // Cookie 설정
+    await app.register(fastifyCookie, {
+        secret: process.env.COOKIE_SECRET || 'cookie-secret',
+    })
+
+    // 플러그인 등록
+    await app.register(prismaPlugin)
+    await app.register(supabasePlugin)
+    await app.register(jwtPlugin)
+
+    // 라우트 등록
+    await app.register(userRoutes, { prefix: '/api' })
+    await app.register(problemRoutes, { prefix: '/api' })
+
+    // Health check
+    app.get('/health', {
+        schema: {
+            tags: ['health'],
+            description: '헬스 체크 엔드포인트',
+            security: [],
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        status: { type: 'string' },
+                        timestamp: { type: 'string' },
+                    },
+                },
+            },
+        },
+    }, async () => {
+        return { status: 'ok', timestamp: new Date().toISOString() }
+    })
+
+    // 글로벌 에러 핸들러
+    app.setErrorHandler((error, request, reply) => {
+        if (error.validation) {
+            return reply.status(400).send({
+                error: '잘못된 요청입니다.',
+                message: error.message,
+                details: error.validation
+            })
+        }
+
+        if (error.statusCode === 401) {
+            return reply.status(401).send({
+                error: '인증에 실패했습니다. 다시 로그인해주세요.'
+            })
+        }
+
+        app.log.error(error)
+        reply.status(error.statusCode || 500).send({
+            error: '서버 내부 에러가 발생했습니다.',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        })
+    })
+
+    return app
+}
