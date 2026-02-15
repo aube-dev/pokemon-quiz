@@ -25,26 +25,6 @@ export const loginSchema = {
     },
 }
 
-export const leaderboardSchema = {
-    tags: ['users'],
-    description: '총점에 따른 상위 100명의 사용자 조회',
-    security: [{ bearerAuth: [] }],
-    response: {
-        200: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    id: { type: 'string', description: '사용자 ID' },
-                    sn: { type: 'string', description: '군번' },
-                    username: { type: 'string', nullable: true, description: '사용자 이름' },
-                    totalScore: { type: 'number', description: '총점' },
-                },
-            },
-        },
-    },
-}
-
 export const meSchema = {
     tags: ['users'],
     description: '현재 사용자 정보 조회 및 토큰 재발급',

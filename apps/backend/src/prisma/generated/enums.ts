@@ -12,7 +12,7 @@
 export const ChallengeStatus = {
   CORRECT: 'CORRECT',
   WRONG: 'WRONG',
-  GIVEN_UP: 'GIVEN_UP'
+  GIVEN_UP: 'GIVEN_UP',
 } as const
 
 export type ChallengeStatus = (typeof ChallengeStatus)[keyof typeof ChallengeStatus]
