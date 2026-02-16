@@ -4,7 +4,8 @@ import { HttpMethod } from "@/constants/api";
 import type { ProblemId, ProblemNumber } from "@/types/problems";
 import type { QuizBlock } from "@pokemon-quiz/interface";
 import type { UserProblemStatus } from "@/constants/userProblems";
-import { api_getLeaderboard, api_getMe } from "./users";
+import { api_getMe } from "./users";
+import { api_getLeaderboard } from './leaderboards'
 import type { UserProblemId } from "@/types/userProblems";
 
 export const problemsQueryKey = queryKey("problems");
@@ -51,7 +52,7 @@ export const api_challengeProblem = api.mutationApi<
   }
 >({
   method: HttpMethod.PATCH,
-  endpoint: (variables) => `/api/problems/number/${variables.number}/challenge`,
+  endpoint: (variables) => `/api/problems/${variables.number}/challenge`,
   request: () => ({}),
   mutationKey: problemsQueryKey.add("challenge").value,
   updatesOnSuccess: () => [api_getMe.queryUpdate(null)],

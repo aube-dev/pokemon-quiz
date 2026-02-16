@@ -26,9 +26,9 @@ const problemRoutes: FastifyPluginAsync = async (server) => {
         const { sortBy, sortOrder } = request.query
         const problems = await problemService.getAllProblems(sortBy, sortOrder)
 
-        // category를 tag로 변환하여 반환
         const result = problems.map(p => ({
             number: p.number,
+            title: p.title,
             tag: p.category,
             score: p.score,
         }))
@@ -64,7 +64,7 @@ const problemRoutes: FastifyPluginAsync = async (server) => {
     // 문제 도전 시작
     server.patch<{
         Params: { number: number }
-    }>('/problems/number/:number/challenge', {
+    }>('/problems/:number/challenge', {
         onRequest: [server.authenticate],
         schema: startChallengeSchema,
     }, async (request, reply) => {

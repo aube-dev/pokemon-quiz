@@ -28,7 +28,7 @@ model Problem {
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
   number       Int           @unique @default(autoincrement()) @map("problem_number")
-  answer       Int           @map("answer")
+  answer       Json          @map("answer")
   userProblems UserProblem[]
 
   @@map("problems")

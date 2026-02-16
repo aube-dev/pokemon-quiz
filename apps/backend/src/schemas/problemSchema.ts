@@ -1,3 +1,26 @@
+const blockItems = {
+    type: 'object',
+    required: ['type'],
+    oneOf: [
+        {
+            properties: { type: { const: 'text' }, content: { type: 'string', description: '텍스트 내용' } },
+            required: ['content']
+        },
+        {
+            properties: { type: { const: 'image' }, imageUrl: { type: 'string', description: '이미지 URL' } },
+            required: ['imageUrl']
+        },
+        {
+            properties: { type: { const: 'youtube' }, embedUrl: { type: 'string', description: '유튜브 임베드 URL' } },
+            required: ['embedUrl']
+        },
+        {
+            properties: { type: { const: 'audio' }, audioUrl: { type: 'string', description: '오디오 URL' } },
+            required: ['audioUrl']
+        }
+    ]
+}
+
 export const getAllProblemsSchema = {
     tags: ['problems'],
     description: '모든 이용 가능한 문제 조회',
@@ -26,6 +49,7 @@ export const getAllProblemsSchema = {
                 type: 'object',
                 properties: {
                     number: { type: 'number', description: '문제 번호' },
+                    title: { type: 'string', description: '문제 제목' },
                     tag: { type: 'string', description: '문제 태그/카테고리' },
                     score: { type: 'number', description: '문제 점수' },
                 },
@@ -56,29 +80,29 @@ export const getProblemByIdSchema = {
                 content: {
                     type: 'array',
                     description: '문제 콘텐츠 (이미지, 텍스트, 유튜브, 오디오 등)',
-                    items: {
-                        type: 'object',
-                        required: ['id', 'type'],
-                        oneOf: [
-                            {
-                                properties: { id: { type: 'string' }, type: { const: 'text' }, content: { type: 'string', description: '텍스트 내용' } },
-                                required: ['content']
-                            },
-                            {
-                                properties: { id: { type: 'string' }, type: { const: 'image' }, imageUrl: { type: 'string', description: '이미지 URL' } },
-                                required: ['imageUrl']
-                            },
-                            {
-                                properties: { id: { type: 'string' }, type: { const: 'youtube' }, embedUrl: { type: 'string', description: '유튜브 임베드 URL' } },
-                                required: ['embedUrl']
-                            },
-                            {
-                                properties: { id: { type: 'string' }, type: { const: 'audio' }, audioUrl: { type: 'string', description: '오디오 URL' } },
-                                required: ['audioUrl']
-                            }
-                        ]
-                    }
+                    items: blockItems
                 },
+                answer: {
+                    type: 'object',
+                    description: '보기 및 정답 정보',
+                    properties: {
+                        options: {
+                            type: 'array',
+                            description: '보기 목록 (4개)',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    number: { type: 'number', description: '보기 번호 (1~4)' },
+                                    blocks: {
+                                        type: 'array',
+                                        description: '보기 콘텐츠 구성 요소',
+                                        items: blockItems
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
         },
         403: {
@@ -105,37 +129,40 @@ export const createProblemSchema = {
         type: 'object',
         required: ['title', 'category', 'score', 'content', 'answer'],
         properties: {
-            number: { type: 'number', description: '문제 번호 (선택사항, 미지정 시 자동 증가)' },
             title: { type: 'string', description: '문제 제목' },
             category: { type: 'string', description: '문제 카테고리' },
             score: { type: 'number', description: '문제 배점' },
             content: {
                 type: 'array',
                 description: '문제 콘텐츠 구성 요소를 담은 배열',
-                items: {
-                    type: 'object',
-                    required: ['id', 'type'],
-                    oneOf: [
-                        {
-                            properties: { id: { type: 'string' }, type: { const: 'text' }, content: { type: 'string', description: '텍스트 내용' } },
-                            required: ['content']
-                        },
-                        {
-                            properties: { id: { type: 'string' }, type: { const: 'image' }, imageUrl: { type: 'string', description: '이미지 URL' } },
-                            required: ['imageUrl']
-                        },
-                        {
-                            properties: { id: { type: 'string' }, type: { const: 'youtube' }, embedUrl: { type: 'string', description: '유튜브 임베드 URL' } },
-                            required: ['embedUrl']
-                        },
-                        {
-                            properties: { id: { type: 'string' }, type: { const: 'audio' }, audioUrl: { type: 'string', description: '오디오 URL' } },
-                            required: ['audioUrl']
-                        }
-                    ]
-                }
+                items: blockItems
             },
-            answer: { type: 'number', description: '문제 정답 (1~4)' },
+            answer: {
+                type: 'object',
+                description: '보기 및 정답 정보',
+                required: ['options', 'correct'],
+                properties: {
+                    options: {
+                        type: 'array',
+                        description: '보기 목록 (4개)',
+                        minItems: 4,
+                        maxItems: 4,
+                        items: {
+                            type: 'object',
+                            required: ['number', 'blocks'],
+                            properties: {
+                                number: { type: 'number', description: '보기 번호 (1~4)' },
+                                blocks: {
+                                    type: 'array',
+                                    description: '보기 콘텐츠 구성 요소',
+                                    items: blockItems
+                                }
+                            }
+                        }
+                    },
+                    correct: { type: 'number', description: '정답 보기 번호 (1~4)' }
+                }
+            }
         },
     },
     response: {
