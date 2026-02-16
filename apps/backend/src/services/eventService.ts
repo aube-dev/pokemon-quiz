@@ -10,8 +10,8 @@ export class EventService {
         if (!config) {
             config = await this.prisma.eventConfig.create({
                 data: {
-                    eventStartTime: new Date('2026-02-17T19:00:00+09:00'),
-                    eventEndTime: new Date('2026-02-17T20:00:00+09:00'),
+                    eventStartTime: new Date('2026-02-17T18:00:00+09:00'),
+                    eventEndTime: new Date('2026-02-17T19:00:00+09:00'),
                 }
             });
         }
