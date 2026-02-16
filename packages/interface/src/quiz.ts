@@ -1,6 +1,4 @@
-interface QuizBlockBase {
-  id: string;
-}
+interface QuizBlockBase {}
 
 export interface QuizBlockText extends QuizBlockBase {
   type: "text";

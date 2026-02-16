@@ -9,58 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as QuizListRouteImport } from './routes/quiz/list'
 import { Route as QuizQuizIdIndexRouteImport } from './routes/quiz/$quizId/index'
 
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuizListRoute = QuizListRouteImport.update({
-  id: '/quiz/list',
-  path: '/quiz/list',
-  getParentRoute: () => rootRouteImport,
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => QuizRoute,
 } as any)
 const QuizQuizIdIndexRoute = QuizQuizIdIndexRouteImport.update({
-  id: '/quiz/$quizId/',
-  path: '/quiz/$quizId/',
-  getParentRoute: () => rootRouteImport,
+  id: '/$quizId/',
+  path: '/$quizId/',
+  getParentRoute: () => QuizRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId': typeof QuizQuizIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/login': typeof LoginRoute
+  '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/quiz/list' | '/quiz/$quizId/'
+  fullPaths: '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/quiz/list' | '/quiz/$quizId'
-  id: '__root__' | '/login' | '/quiz/list' | '/quiz/$quizId/'
+  to: '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId'
+  id: '__root__' | '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
-  QuizListRoute: typeof QuizListRoute
-  QuizQuizIdIndexRoute: typeof QuizQuizIdIndexRoute
+  QuizRoute: typeof QuizRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -70,25 +85,36 @@ declare module '@tanstack/react-router' {
     }
     '/quiz/list': {
       id: '/quiz/list'
-      path: '/quiz/list'
+      path: '/list'
       fullPath: '/quiz/list'
       preLoaderRoute: typeof QuizListRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuizRoute
     }
     '/quiz/$quizId/': {
       id: '/quiz/$quizId/'
-      path: '/quiz/$quizId'
+      path: '/$quizId'
       fullPath: '/quiz/$quizId/'
       preLoaderRoute: typeof QuizQuizIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof QuizRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  LoginRoute: LoginRoute,
+interface QuizRouteChildren {
+  QuizListRoute: typeof QuizListRoute
+  QuizQuizIdIndexRoute: typeof QuizQuizIdIndexRoute
+}
+
+const QuizRouteChildren: QuizRouteChildren = {
   QuizListRoute: QuizListRoute,
   QuizQuizIdIndexRoute: QuizQuizIdIndexRoute,
+}
+
+const QuizRouteWithChildren = QuizRoute._addFileChildren(QuizRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  LoginRoute: LoginRoute,
+  QuizRoute: QuizRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
