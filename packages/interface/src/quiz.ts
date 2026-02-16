@@ -27,3 +27,21 @@ export type QuizBlock =
   | QuizBlockImage
   | QuizBlockYoutube
   | QuizBlockAudio;
+
+export interface CreateProblemDto {
+  number?: number;
+  title: string;
+  category: string;
+  score: number;
+  content: QuizBlock[];
+  answer: number;
+}
+
+export interface SubmitAnswerDto {
+  choice: number;
+}
+
+export interface UserLoginDto {
+  sn: string;
+  username?: string;
+}

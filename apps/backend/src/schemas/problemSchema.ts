@@ -36,7 +36,6 @@ export const getProblemByIdSchema = {
                 title: { type: 'string', description: '문제 제목' },
                 category: { type: 'string', description: '문제 카테고리' },
                 score: { type: 'number', description: '문제 점수' },
-                answer: { type: 'number', description: '문제 정답 번호(1~4)' },
                 content: {
                     type: 'array',
                     description: '문제 콘텐츠 (이미지, 텍스트, 유튜브, 오디오 등)',

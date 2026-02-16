@@ -47,6 +47,9 @@ importers:
         specifier: ^8.16.3
         version: 8.18.0
     devDependencies:
+      '@pokemon-quiz/interface':
+        specifier: workspace:*
+        version: link:../../packages/interface
       '@types/node':
         specifier: 22.18.12
         version: 22.18.12

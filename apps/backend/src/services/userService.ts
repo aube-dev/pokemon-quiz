@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { UserLoginDto } from '../types/quiz'
+import { UserLoginDto } from '@pokemon-quiz/interface'
 
 export class UserService {
     constructor(private server: FastifyInstance) { }
