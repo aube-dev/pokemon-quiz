@@ -14,11 +14,17 @@ const problemRoutes: FastifyPluginAsync = async (server) => {
     const problemService = new ProblemService(server)
 
     // 모든 문제 조회
-    server.get('/problems', {
+    server.get<{
+        Querystring: {
+            sortBy?: 'number' | 'score'
+            sortOrder?: 'asc' | 'desc'
+        }
+    }>('/problems', {
         onRequest: [server.authenticate],
         schema: getAllProblemsSchema,
-    }, async (_, reply) => {
-        const problems = await problemService.getAllProblems()
+    }, async (request, reply) => {
+        const { sortBy, sortOrder } = request.query
+        const problems = await problemService.getAllProblems(sortBy, sortOrder)
 
         const result = problems.map(p => ({
             number: p.number,

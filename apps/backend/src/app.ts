@@ -6,9 +6,11 @@ import fastifyCookie from '@fastify/cookie'
 import prismaPlugin from './plugins/prisma'
 import supabasePlugin from './plugins/supabase'
 import jwtPlugin from './plugins/jwt'
+import eventGatePlugin from './plugins/event-gate'
 import userRoutes from './routes/users'
 import problemRoutes from './routes/problems'
 import leaderboardRoutes from './routes/leaderboard'
+import eventRoutes from './routes/event'
 
 export async function buildApp(): Promise<FastifyInstance> {
     const app = Fastify({
@@ -83,11 +85,13 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(prismaPlugin)
     await app.register(supabasePlugin)
     await app.register(jwtPlugin)
+    await app.register(eventGatePlugin)
 
     // 라우트 등록
     await app.register(userRoutes, { prefix: '/api' })
     await app.register(problemRoutes, { prefix: '/api' })
     await app.register(leaderboardRoutes, { prefix: '/api' })
+    await app.register(eventRoutes, { prefix: '/api' })
 
     // Health check
     app.get('/health', {

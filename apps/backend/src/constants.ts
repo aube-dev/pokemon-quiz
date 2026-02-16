@@ -10,6 +10,7 @@ export const ERROR_MESSAGES = {
     ALREADY_ATTEMPTED: '이미 이 문제를 시작했거나 완료했습니다.',
     CHALLENGE_REQUIRED: '먼저 도전을 시작해야 합니다.',
     CHALLENGE_ENDED: '이 문제는 이미 완료되었거나 포기한 상태입니다.',
+    EVENT_NOT_OPEN: '이벤트 기간이 아닙니다. 정해진 시간에 참여 가능합니다.',
 };
 
 export const ERROR_CODES = {

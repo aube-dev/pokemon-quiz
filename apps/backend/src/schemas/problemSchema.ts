@@ -25,6 +25,23 @@ export const getAllProblemsSchema = {
     tags: ['problems'],
     description: '모든 이용 가능한 문제 조회',
     security: [{ bearerAuth: [] }],
+    querystring: {
+        type: 'object',
+        properties: {
+            sortBy: {
+                type: 'string',
+                enum: ['number', 'score'],
+                default: 'number',
+                description: '정렬 기준 (number: 번호순, score: 배점순)'
+            },
+            sortOrder: {
+                type: 'string',
+                enum: ['asc', 'desc'],
+                default: 'asc',
+                description: '정렬 방향 (asc: 오름차순, desc: 내림차순)'
+            }
+        }
+    },
     response: {
         200: {
             type: 'array',
@@ -215,6 +232,7 @@ export const submitAnswerSchema = {
                 status: { type: 'string', description: '상태 (CORRECT 또는 WRONG)' },
                 score: { type: 'number', description: '획득한 점수' },
                 submittedAt: { type: 'string', format: 'date-time', description: '제출 시각' },
+                isCorrect: { type: 'boolean', description: '정답 여부' },
             },
         },
         400: {
