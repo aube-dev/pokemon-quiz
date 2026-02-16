@@ -46,7 +46,7 @@ function RouteComponent() {
           axis="y"
           as="div"
           values={problems?.map((problem) => problem.number) ?? []}
-          onReorder={() => { }}
+          onReorder={() => {}}
           className="p-4 flex flex-col gap-2"
         >
           {[...(problems ?? [])]
@@ -58,7 +58,7 @@ function RouteComponent() {
                 key={problem.number}
                 number={problem.number}
                 tags={[problem.tag]}
-                questionPreview="다음 BGM이 흘러나오는 맵으로 적절한 것은?"
+                questionPreview={problem.title}
                 score={problem.score}
               />
             ))}

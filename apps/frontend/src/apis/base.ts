@@ -1,4 +1,5 @@
 import { Api } from "@/core/api/Api";
+import { toast } from "sonner";
 
 export const api = new Api<{ error: string }>({
   baseUrl: undefined, // TODO: 배포 시 실제 백엔드 주소로 연결
@@ -12,5 +13,10 @@ export const api = new Api<{ error: string }>({
   },
   fetchOptions: {
     credentials: "include",
+  },
+  mutationOptions: {
+    onError: (error) => {
+      toast.error(error.message);
+    },
   },
 });

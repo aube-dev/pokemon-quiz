@@ -5,7 +5,7 @@ import type { ProblemId, ProblemNumber } from "@/types/problems";
 import type { QuizBlock } from "@pokemon-quiz/interface";
 import type { UserProblemStatus } from "@/constants/userProblems";
 import { api_getMe } from "./users";
-import { api_getLeaderboard } from './leaderboards'
+import { api_getLeaderboard } from "./leaderboards";
 import type { UserProblemId } from "@/types/userProblems";
 
 export const problemsQueryKey = queryKey("problems");
@@ -16,6 +16,7 @@ export const api_getProblems = api.queryApi<
     number: ProblemNumber;
     tag: string;
     score: number;
+    title: string;
   }[]
 >({
   method: HttpMethod.GET,
@@ -35,6 +36,12 @@ export const api_getProblemDetail = api.queryApi<
     category: string;
     score: number;
     content: QuizBlock[];
+    answer: {
+      options: {
+        number: number;
+        blocks: QuizBlock[];
+      }[];
+    };
   }
 >({
   method: HttpMethod.GET,
