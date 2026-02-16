@@ -104,3 +104,35 @@ export const api_giveUpProblem = api.mutationApi<
     api_getLeaderboard.queryUpdate(null),
   ],
 });
+
+export const api_createProblem = api.mutationApi<
+  {
+    answer: {
+      options: {
+        number: number;
+        blocks: QuizBlock[];
+      }[];
+      correct: number;
+    };
+    category: string;
+    content: QuizBlock[];
+    score: number;
+    title: string;
+  },
+  {
+    id: ProblemId;
+    number: ProblemNumber;
+    title: string;
+    category: string;
+    score: number;
+  }
+>({
+  method: HttpMethod.POST,
+  endpoint: "/api/problems",
+  request: (variables) => ({
+    body: {
+      ...variables,
+    },
+  }),
+  mutationKey: problemsQueryKey.add("create").value,
+});
