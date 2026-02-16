@@ -25,10 +25,10 @@ model Problem {
   category     String        @map("category")
   score        Int           @map("score")
   content      Json          @map("data")
-  answer       Json          @map("answer")
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
   number       Int           @unique @default(autoincrement()) @map("problem_number")
+  answer       Json          @map("answer")
   userProblems UserProblem[]
 
   @@map("problems")
