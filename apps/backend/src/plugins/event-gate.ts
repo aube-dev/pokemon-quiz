@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { ERROR_MESSAGES } from '../constants';
+import { EventNotOpen } from '../errors';
 
 const eventGate: FastifyPluginAsync = async (fastify) => {
     fastify.addHook('onRequest', async (request, reply) => {
@@ -16,12 +16,10 @@ const eventGate: FastifyPluginAsync = async (fastify) => {
             return;
         }
 
-        // Fetch config from DB
         let config = await fastify.prisma.eventConfig.findFirst();
 
-        // Default if not found (should be initialized by service but being safe)
         if (!config) {
-            return; // Or block? If no config, maybe allow? Let's be strict.
+            return;
         }
 
         const now = new Date();
@@ -29,12 +27,10 @@ const eventGate: FastifyPluginAsync = async (fastify) => {
         const endTime = new Date(config.eventEndTime);
 
         if (now < startTime || now > endTime) {
-            return reply.status(503).send({
-                error: 'Service Unavailable',
-                message: ERROR_MESSAGES.EVENT_NOT_OPEN,
+            return reply.status(503).send(new EventNotOpen({
                 startTime: startTime.toISOString(),
                 endTime: endTime.toISOString(),
-            });
+            }));
         }
     });
 };

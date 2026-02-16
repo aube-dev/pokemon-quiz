@@ -109,7 +109,7 @@ export const getProblemByIdSchema = {
             type: 'object',
             properties: {
                 error: { type: 'string', description: '에러 메시지' },
-                code: { type: 'string', description: '에러 코드 (예: PROBLEM_GIVEN_UP)' },
+                code: { type: 'string', description: '에러 코드' },
             },
         },
         404: {

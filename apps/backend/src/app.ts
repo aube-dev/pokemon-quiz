@@ -27,6 +27,26 @@ export async function buildApp(): Promise<FastifyInstance> {
         } : true,
     })
 
+    // 글로벌 에러 핸들러
+    app.setErrorHandler((error, _, reply) => {
+        if (error.statusCode === 400) {
+            return reply.status(400).send({
+                error: error.message
+            })
+        }
+
+        if (error.statusCode === 401) {
+            return reply.status(401).send({
+                error: '인증에 실패했습니다. 다시 로그인해주세요.',
+            })
+        }
+
+        app.log.error(error)
+        reply.status(error.statusCode || 500).send({
+            error: error.message
+        })
+    })
+
     // Swagger 설정 (OpenAPI 문서 생성)
     await app.register(fastifySwagger, {
         openapi: {
@@ -111,29 +131,6 @@ export async function buildApp(): Promise<FastifyInstance> {
         },
     }, async () => {
         return { status: 'ok', timestamp: new Date().toISOString() }
-    })
-
-    // 글로벌 에러 핸들러
-    app.setErrorHandler((error, request, reply) => {
-        if (error.validation) {
-            return reply.status(400).send({
-                error: '잘못된 요청입니다.',
-                message: error.message,
-                details: error.validation
-            })
-        }
-
-        if (error.statusCode === 401) {
-            return reply.status(401).send({
-                error: '인증에 실패했습니다. 다시 로그인해주세요.'
-            })
-        }
-
-        app.log.error(error)
-        reply.status(error.statusCode || 500).send({
-            error: '서버 내부 에러가 발생했습니다.',
-            message: process.env.NODE_ENV === 'development' ? error.message : undefined
-        })
     })
 
     return app

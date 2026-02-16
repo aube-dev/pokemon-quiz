@@ -1,8 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import { ChallengeStatus } from '@prisma/client'
-import { ERROR_MESSAGES, ERROR_CODES, ENCRYPTION_KEY } from '../constants'
-import { decrypt, encrypt } from '../utils/crypto'
 import type { CreateProblemDto, SubmitAnswerDto } from '@pokemon-quiz/interface'
+import { ENCRYPTION_KEY } from '../constants'
+import { decrypt, encrypt } from '../utils/crypto'
+import { AlreadyAttempted, ChallengeEnded, ChallengeRequired, ForbiddenGivenUp, ProblemNotFound } from '../errors'
 
 export class ProblemService {
     constructor(private server: FastifyInstance) { }
@@ -31,13 +32,8 @@ export class ProblemService {
             },
         })
 
-        if (userProblem && userProblem.status === ChallengeStatus.GIVEN_UP) {
-            throw {
-                statusCode: 403,
-                message: ERROR_MESSAGES.FORBIDDEN_GIVEN_UP,
-                code: ERROR_CODES.PROBLEM_GIVEN_UP
-            }
-        }
+        if (userProblem && userProblem.status === ChallengeStatus.GIVEN_UP) throw new ForbiddenGivenUp()
+
 
         const problem = await this.server.prisma.problem.findUnique({
             where: { id },
@@ -48,6 +44,7 @@ export class ProblemService {
                 category: true,
                 score: true,
                 content: true,
+                answer: true,
                 createdAt: true,
                 updatedAt: true,
             }
@@ -60,7 +57,7 @@ export class ProblemService {
         })
 
         if (!problem) {
-            throw { statusCode: 404, message: ERROR_MESSAGES.PROBLEM_NOT_FOUND }
+            throw new ProblemNotFound()
         }
 
         return problem
@@ -88,9 +85,8 @@ export class ProblemService {
             where: { number: problemNumber }
         })
 
-        if (!problem) {
-            throw { statusCode: 404, message: ERROR_MESSAGES.PROBLEM_NOT_FOUND }
-        }
+        if (!problem) throw new ProblemNotFound()
+
 
         const problemId = problem.id
 
@@ -103,9 +99,8 @@ export class ProblemService {
             },
         })
 
-        if (existingAttempt) {
-            throw { statusCode: 400, message: ERROR_MESSAGES.ALREADY_ATTEMPTED }
-        }
+        if (existingAttempt) throw new AlreadyAttempted()
+
 
         return this.server.prisma.userProblem.create({
             data: {
@@ -133,13 +128,8 @@ export class ProblemService {
             }
         })
 
-        if (!attempt) {
-            throw { statusCode: 400, message: ERROR_MESSAGES.CHALLENGE_REQUIRED }
-        }
-
-        if (attempt.status !== ChallengeStatus.CHALLENGING) {
-            throw { statusCode: 400, message: ERROR_MESSAGES.CHALLENGE_ENDED }
-        }
+        if (!attempt) throw new ChallengeRequired()
+        if (attempt.status !== ChallengeStatus.CHALLENGING) throw new ChallengeEnded()
 
         const isCorrect = attempt.problem.answer === choice
         const newStatus: ChallengeStatus = isCorrect ? ChallengeStatus.CORRECT : ChallengeStatus.WRONG
@@ -182,11 +172,11 @@ export class ProblemService {
         })
 
         if (!attempt) {
-            throw { statusCode: 400, message: ERROR_MESSAGES.CHALLENGE_REQUIRED }
+            throw new ChallengeRequired()
         }
 
         if (attempt.status !== ChallengeStatus.CHALLENGING) {
-            throw { statusCode: 400, message: ERROR_MESSAGES.CHALLENGE_ENDED }
+            throw new ChallengeEnded()
         }
 
         return this.server.prisma.userProblem.update({
