@@ -1,21 +1,20 @@
-interface QuizBlockBase {}
 
-export interface QuizBlockText extends QuizBlockBase {
+export interface QuizBlockText {
   type: "text";
   content: string;
 }
 
-export interface QuizBlockImage extends QuizBlockBase {
+export interface QuizBlockImage {
   type: "image";
   imageUrl: string;
 }
 
-export interface QuizBlockYoutube extends QuizBlockBase {
+export interface QuizBlockYoutube {
   type: "youtube";
   embedUrl: string;
 }
 
-export interface QuizBlockAudio extends QuizBlockBase {
+export interface QuizBlockAudio {
   type: "audio";
   audioUrl: string;
 }
@@ -26,15 +25,22 @@ export type QuizBlock =
   | QuizBlockYoutube
   | QuizBlockAudio;
 
+export interface QuizAnswer {
+  options: {
+    number: number;
+    blocks: QuizBlock[];
+  }[];
+  correct: number;
+}
+
 export interface CreateProblemDto {
   number?: number;
   title: string;
   category: string;
   score: number;
   content: QuizBlock[];
-  answer: number;
+  answer: QuizAnswer;
 }
-
 export interface SubmitAnswerDto {
   choice: number;
 }
