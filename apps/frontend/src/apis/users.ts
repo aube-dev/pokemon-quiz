@@ -30,21 +30,6 @@ export const api_login = api.mutationApi<
   mutationKey: usersQueryKey.add("login").value,
 });
 
-export const api_getLeaderboard = api.queryApi<
-  null,
-  {
-    id: UserId;
-    sn: string;
-    username: string | null;
-    totalScore: number;
-  }[]
->({
-  method: HttpMethod.GET,
-  endpoint: "/api/users/leaderboard",
-  request: () => ({}),
-  queryKey: () => usersQueryKey.add("leaderboard").value,
-});
-
 export const api_getMe = api.queryApi<
   null,
   {
