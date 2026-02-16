@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { api_login } from "@/apis/users";
+import { AsyncButton } from "@/components/AsyncButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createFileRoute } from "@tanstack/react-router";
@@ -19,6 +20,8 @@ function RouteComponent() {
     nickname: "",
     sn: "",
   });
+
+  const loginMutation = api_login.useMutation();
 
   return (
     <div className="flex flex-col items-center gap-8 px-8 py-4">
@@ -66,9 +69,17 @@ function RouteComponent() {
             }}
           />
         </div>
-        <Button disabled={!info.roomNumber || !info.nickname || !info.sn}>
+        <AsyncButton
+          disabled={!info.roomNumber || !info.nickname || !info.sn}
+          onClick={async () => {
+            await loginMutation.mutateAsync({
+              sn: info.sn,
+              username: info.nickname,
+            });
+          }}
+        >
           <LogIn /> 퀴즈 시작
-        </Button>
+        </AsyncButton>
       </div>
     </div>
   );

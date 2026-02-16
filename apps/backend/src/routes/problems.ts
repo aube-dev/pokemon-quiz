@@ -17,7 +17,7 @@ const problemRoutes: FastifyPluginAsync = async (server) => {
     server.get('/problems', {
         onRequest: [server.authenticate],
         schema: getAllProblemsSchema,
-    }, async (request, reply) => {
+    }, async (_, reply) => {
         const problems = await problemService.getAllProblems()
 
         // category를 tag로 변환하여 반환

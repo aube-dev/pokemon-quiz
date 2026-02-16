@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { UserService } from '../services/userService'
 import { COOKIE_MAX_AGE } from '../constants'
-import { loginSchema, leaderboardSchema, meSchema } from '../schemas/userSchema'
+import { loginSchema, meSchema } from '../schemas/userSchema'
 import type { UserLoginDto } from '@pokemon-quiz/interface'
 
 const userRoutes: FastifyPluginAsync = async (server) => {
@@ -28,15 +28,6 @@ const userRoutes: FastifyPluginAsync = async (server) => {
         })
 
         return reply.send(user)
-    })
-
-    // 리더보드 조회 (점수 순위)
-    server.get('/users/leaderboard', {
-        onRequest: [server.authenticate],
-        schema: leaderboardSchema,
-    }, async (request, reply) => {
-        const users = await userService.getLeaderboard()
-        return reply.send(users)
     })
 
     // 내 정보 조회 (+ 토큰 재발급)

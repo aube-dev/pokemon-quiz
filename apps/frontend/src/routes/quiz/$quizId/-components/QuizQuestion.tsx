@@ -40,16 +40,16 @@ const QuizQuestionAudioBlock = ({ block }: { block: QuizBlockAudio }) => {
 const QuizQuestion = ({ blocks }: QuizQuestionProps) => {
   return (
     <div className="flex flex-col gap-4">
-      {blocks.map((block) => {
+      {blocks.map((block, blockIndex) => {
         switch (block.type) {
           case "text":
-            return <QuizQuestionTextBlock key={block.id} block={block} />;
+            return <QuizQuestionTextBlock key={blockIndex} block={block} />;
           case "image":
-            return <QuizQuestionImageBlock key={block.id} block={block} />;
+            return <QuizQuestionImageBlock key={blockIndex} block={block} />;
           case "youtube":
-            return <QuizQuestionYoutubeBlock key={block.id} block={block} />;
+            return <QuizQuestionYoutubeBlock key={blockIndex} block={block} />;
           case "audio":
-            return <QuizQuestionAudioBlock key={block.id} block={block} />;
+            return <QuizQuestionAudioBlock key={blockIndex} block={block} />;
           default:
             return null;
         }

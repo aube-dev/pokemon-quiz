@@ -8,6 +8,7 @@ import supabasePlugin from './plugins/supabase'
 import jwtPlugin from './plugins/jwt'
 import userRoutes from './routes/users'
 import problemRoutes from './routes/problems'
+import leaderboardRoutes from './routes/leaderboard'
 
 export async function buildApp(): Promise<FastifyInstance> {
     const app = Fastify({
@@ -41,6 +42,7 @@ export async function buildApp(): Promise<FastifyInstance> {
             tags: [
                 { name: 'users', description: '사용자 관련 엔드포인트' },
                 { name: 'problems', description: '문제 관련 엔드포인트' },
+                { name: 'leaderboards', description: '리더보드 관련 엔드포인트' },
                 { name: 'health', description: '헬스 체크 엔드포인트' },
             ],
             components: {
@@ -85,6 +87,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     // 라우트 등록
     await app.register(userRoutes, { prefix: '/api' })
     await app.register(problemRoutes, { prefix: '/api' })
+    await app.register(leaderboardRoutes, { prefix: '/api' })
 
     // Health check
     app.get('/health', {
