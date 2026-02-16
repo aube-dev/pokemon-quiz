@@ -1,6 +1,7 @@
 import { api_getMe } from "@/apis/users";
 import { queryClient } from "@/core/api/tanstackQuery";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { EventGate } from "@/components/EventGate";
 
 export const Route = createFileRoute("/quiz")({
   component: RouteComponent,
@@ -16,5 +17,9 @@ export const Route = createFileRoute("/quiz")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <EventGate>
+      <Outlet />
+    </EventGate>
+  );
 }
