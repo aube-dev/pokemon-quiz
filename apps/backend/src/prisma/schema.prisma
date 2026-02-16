@@ -26,7 +26,7 @@ model Problem {
   category     String        @map("category")
   score        Int           @map("score")
   content      Json          @map("data")
-  answer       Int           @map("answer")
+  answer       Json          @map("answer")
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
   userProblems UserProblem[]
@@ -47,6 +47,12 @@ model UserProblem {
 
   @@unique([userId, problemId])
   @@map("user_problems")
+}
+
+model event_configs {
+  id               Int      @id @default(1)
+  event_start_time DateTime
+  event_end_time   DateTime
 }
 
 enum ChallengeStatus {

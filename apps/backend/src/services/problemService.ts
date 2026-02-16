@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { ChallengeStatus } from '@prisma/client'
-import { ERROR_MESSAGES, ERROR_CODES } from '../constants'
+import { ERROR_MESSAGES, ERROR_CODES, ENCRYPTION_KEY } from '../constants'
+import { decrypt, encrypt } from '../utils/crypto'
 import type { CreateProblemDto, SubmitAnswerDto } from '@pokemon-quiz/interface'
 
 export class ProblemService {
@@ -10,6 +11,7 @@ export class ProblemService {
         return this.server.prisma.problem.findMany({
             select: {
                 number: true,
+                title: true,
                 category: true,
                 score: true,
             },
@@ -20,7 +22,6 @@ export class ProblemService {
     }
 
     async getProblemById(id: string, userId: string) {
-        // Check if given up
         const userProblem = await this.server.prisma.userProblem.findUnique({
             where: {
                 userId_problemId: {
@@ -50,6 +51,12 @@ export class ProblemService {
                 createdAt: true,
                 updatedAt: true,
             }
+        }).then(d => {
+            if (!d) return null
+            return {
+                ...d,
+                title: decrypt(d.title, ENCRYPTION_KEY),
+            }
         })
 
         if (!problem) {
@@ -60,10 +67,18 @@ export class ProblemService {
     }
 
     async createProblem(dto: CreateProblemDto) {
+        const lastProblem = await this.server.prisma.problem.findFirst({
+            orderBy: { number: 'desc' },
+            select: { number: true },
+        });
+
         return this.server.prisma.problem.create({
             data: {
                 ...dto,
+                number: (lastProblem?.number || 0) + 1,
+                title: encrypt(dto.title, ENCRYPTION_KEY),
                 content: dto.content as any,
+                answer: dto.answer as any,
             },
         })
     }

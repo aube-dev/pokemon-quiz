@@ -15,3 +15,5 @@ export const ERROR_MESSAGES = {
 export const ERROR_CODES = {
     PROBLEM_GIVEN_UP: 'PROBLEM_GIVEN_UP',
 };
+
+export const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'dev-key';
