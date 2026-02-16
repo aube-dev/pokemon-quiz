@@ -1,23 +1,22 @@
-
-export interface QuizBlockText {
+export type QuizBlockText = {
   type: "text";
   content: string;
-}
+};
 
-export interface QuizBlockImage {
+export type QuizBlockImage = {
   type: "image";
   imageUrl: string;
-}
+};
 
-export interface QuizBlockYoutube {
+export type QuizBlockYoutube = {
   type: "youtube";
   embedUrl: string;
-}
+};
 
-export interface QuizBlockAudio {
+export type QuizBlockAudio = {
   type: "audio";
   audioUrl: string;
-}
+};
 
 export type QuizBlock =
   | QuizBlockText

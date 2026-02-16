@@ -11,6 +11,8 @@ export const Route = createFileRoute("/login")({
 });
 
 function RouteComponent() {
+  const navigate = Route.useNavigate();
+
   const [info, setInfo] = useState<{
     roomNumber: string;
     nickname: string;
@@ -21,7 +23,11 @@ function RouteComponent() {
     sn: "",
   });
 
-  const loginMutation = api_login.useMutation();
+  const loginMutation = api_login.useMutation({
+    onSuccess: () => {
+      navigate({ to: "/quiz/list", replace: true });
+    },
+  });
 
   return (
     <div className="flex flex-col items-center gap-8 px-8 py-4">

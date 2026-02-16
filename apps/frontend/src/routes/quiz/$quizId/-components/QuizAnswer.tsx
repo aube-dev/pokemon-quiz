@@ -9,7 +9,10 @@ import type {
 } from "@pokemon-quiz/interface";
 
 interface QuizAnswerProps {
-  answers: { number: number; blocks: QuizBlock[] }[];
+  answers: {
+    number: number;
+    blocks: QuizBlock[];
+  }[];
   answerNumber?: number;
   onAnswerChange?: (answerNumber: number) => void;
 }
@@ -19,7 +22,7 @@ const QuizAnswerTextBlock = ({ block }: { block: QuizBlockText }) => {
 };
 
 const QuizAnswerImageBlock = ({ block }: { block: QuizBlockImage }) => {
-  return <img src={block.imageUrl} />;
+  return <img src={block.imageUrl} className="w-full" />;
 };
 
 const QuizAnswerYoutubeBlock = ({ block }: { block: QuizBlockYoutube }) => {
@@ -53,13 +56,17 @@ const QuizAnswer = ({
         onAnswerChange?.(Number(newValue));
       }}
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         {answers.map((answer) => (
           <div key={answer.number} className="flex flex-row items-center gap-2">
-            <RadioGroupItem
-              value={answer.number.toString()}
-              id={answer.number.toString()}
-            />
+            <div className="relative flex justify-center items-center">
+              <RadioGroupItem
+                value={answer.number.toString()}
+                id={answer.number.toString()}
+                className="border-foreground size-5 [&_svg]:size-3"
+              />
+              <span className="absolute text-sm">{answer.number}</span>
+            </div>
             <Label
               htmlFor={answer.number.toString()}
               className="font-normal text-base flex flex-col items-start"

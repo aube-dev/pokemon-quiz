@@ -7,4 +7,5 @@ export {
   type CreateProblemDto,
   type SubmitAnswerDto,
   type UserLoginDto,
+  type QuizAnswer,
 } from "./quiz";

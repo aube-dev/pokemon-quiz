@@ -7,7 +7,7 @@ import { RefreshCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Reorder } from "motion/react";
 
-export const Route = createFileRoute("/quiz/leaderboard/")({
+export const Route = createFileRoute("/leaderboard/")({
   component: RouteComponent,
 });
 

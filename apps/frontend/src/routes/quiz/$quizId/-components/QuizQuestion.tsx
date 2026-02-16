@@ -15,7 +15,7 @@ const QuizQuestionTextBlock = ({ block }: { block: QuizBlockText }) => {
 };
 
 const QuizQuestionImageBlock = ({ block }: { block: QuizBlockImage }) => {
-  return <img src={block.imageUrl} />;
+  return <img src={block.imageUrl} className="w-full" />;
 };
 
 const QuizQuestionYoutubeBlock = ({ block }: { block: QuizBlockYoutube }) => {
