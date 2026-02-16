@@ -3,6 +3,7 @@ import { ChallengeStatus } from "@prisma/client";
 import type {
   CreateProblemDto,
   SubmitAnswerDto,
+  QuizAnswer,
 } from "@pokemon-quiz/interface";
 import { ENCRYPTION_KEY } from "../constants";
 import { decrypt, encrypt } from "../utils/crypto";
@@ -13,7 +14,6 @@ import {
   ForbiddenGivenUp,
   ProblemNotFound,
 } from "../errors";
-import { QuizAnswer } from "@pokemon-quiz/interface/src/quiz";
 
 export class ProblemService {
   constructor(private server: FastifyInstance) {}
