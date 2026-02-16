@@ -21,14 +21,14 @@ model User {
 
 model Problem {
   id           String        @id @default(uuid())
-  number       Int           @unique @default(autoincrement()) @map("problem_number")
   title        String        @map("title")
   category     String        @map("category")
   score        Int           @map("score")
   content      Json          @map("data")
-  answer       Int           @map("answer")
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
+  number       Int           @unique @default(autoincrement()) @map("problem_number")
+  answer       Int           @map("answer")
   userProblems UserProblem[]
 
   @@map("problems")
@@ -47,6 +47,14 @@ model UserProblem {
 
   @@unique([userId, problemId])
   @@map("user_problems")
+}
+
+model EventConfig {
+  id             Int      @id @default(1)
+  eventStartTime DateTime @map("event_start_time")
+  eventEndTime   DateTime @map("event_end_time")
+
+  @@map("event_configs")
 }
 
 enum ChallengeStatus {

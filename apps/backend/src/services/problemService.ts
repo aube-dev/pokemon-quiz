@@ -6,7 +6,7 @@ import { ERROR_MESSAGES, ERROR_CODES } from '../constants'
 export class ProblemService {
     constructor(private server: FastifyInstance) { }
 
-    async getAllProblems() {
+    async getAllProblems(sortBy: 'number' | 'score' = 'number', sortOrder: 'asc' | 'desc' = 'asc') {
         return this.server.prisma.problem.findMany({
             select: {
                 number: true,
@@ -14,7 +14,7 @@ export class ProblemService {
                 score: true,
             },
             orderBy: {
-                number: 'asc',
+                [sortBy]: sortOrder,
             },
         })
     }
@@ -157,7 +157,10 @@ export class ProblemService {
             })
         }
 
-        return updatedUserProblem
+        return {
+            ...updatedUserProblem,
+            isCorrect
+        }
     }
 
     async giveUp(userId: string, problemId: string) {
