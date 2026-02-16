@@ -1,8 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { UserService } from '../services/userService'
-import { UserLoginDto } from '../types/quiz'
 import { COOKIE_MAX_AGE } from '../constants'
 import { loginSchema, meSchema } from '../schemas/userSchema'
+import type { UserLoginDto } from '@pokemon-quiz/interface'
 
 const userRoutes: FastifyPluginAsync = async (server) => {
     const userService = new UserService(server)

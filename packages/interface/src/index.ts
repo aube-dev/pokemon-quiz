@@ -4,4 +4,7 @@ export {
   type QuizBlockYoutube,
   type QuizBlockAudio,
   type QuizBlock,
+  type CreateProblemDto,
+  type SubmitAnswerDto,
+  type UserLoginDto,
 } from "./quiz";

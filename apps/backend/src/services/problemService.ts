@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { ChallengeStatus } from '@prisma/client'
-import { CreateProblemDto, SubmitAnswerDto } from '../types/quiz'
 import { ERROR_MESSAGES, ERROR_CODES } from '../constants'
+import type { CreateProblemDto, SubmitAnswerDto } from '@pokemon-quiz/interface'
 
 export class ProblemService {
     constructor(private server: FastifyInstance) { }
@@ -49,11 +49,6 @@ export class ProblemService {
                 content: true,
                 createdAt: true,
                 updatedAt: true,
-                answer: true, // Internal use mainly, but route filters it out? 
-                // Wait, original route didn't select answer for public response usually, 
-                // but checking original code:
-                // select: { id, number, title, category, score, content, createdAt, updatedAt } 
-                // It does NOT select answer.
             }
         })
 
@@ -61,8 +56,6 @@ export class ProblemService {
             throw { statusCode: 404, message: ERROR_MESSAGES.PROBLEM_NOT_FOUND }
         }
 
-        // Return problem without answer for now, controller will handle response shape if needed.
-        // Actually service should return domain object.
         return problem
     }
 

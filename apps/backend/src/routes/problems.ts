@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
 import { ProblemService } from '../services/problemService'
-import { CreateProblemDto, SubmitAnswerDto } from '../types/quiz'
 import {
     getAllProblemsSchema,
     getProblemByIdSchema,
@@ -9,6 +8,7 @@ import {
     submitAnswerSchema,
     giveUpSchema,
 } from '../schemas/problemSchema'
+import type { CreateProblemDto, SubmitAnswerDto } from '@pokemon-quiz/interface'
 
 const problemRoutes: FastifyPluginAsync = async (server) => {
     const problemService = new ProblemService(server)
