@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as QuizListRouteImport } from './routes/quiz/list'
+import { Route as QuizLeaderboardIndexRouteImport } from './routes/quiz/leaderboard/index'
 import { Route as QuizQuizIdIndexRouteImport } from './routes/quiz/$quizId/index'
 
 const QuizRoute = QuizRouteImport.update({
@@ -29,6 +30,11 @@ const QuizListRoute = QuizListRouteImport.update({
   path: '/list',
   getParentRoute: () => QuizRoute,
 } as any)
+const QuizLeaderboardIndexRoute = QuizLeaderboardIndexRouteImport.update({
+  id: '/leaderboard/',
+  path: '/leaderboard/',
+  getParentRoute: () => QuizRoute,
+} as any)
 const QuizQuizIdIndexRoute = QuizQuizIdIndexRouteImport.update({
   id: '/$quizId/',
   path: '/$quizId/',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
+  '/quiz/leaderboard/': typeof QuizLeaderboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId': typeof QuizQuizIdIndexRoute
+  '/quiz/leaderboard': typeof QuizLeaderboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,25 @@ export interface FileRoutesById {
   '/quiz': typeof QuizRouteWithChildren
   '/quiz/list': typeof QuizListRoute
   '/quiz/$quizId/': typeof QuizQuizIdIndexRoute
+  '/quiz/leaderboard/': typeof QuizLeaderboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId/'
+  fullPaths:
+    | '/login'
+    | '/quiz'
+    | '/quiz/list'
+    | '/quiz/$quizId/'
+    | '/quiz/leaderboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId'
-  id: '__root__' | '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId/'
+  to: '/login' | '/quiz' | '/quiz/list' | '/quiz/$quizId' | '/quiz/leaderboard'
+  id:
+    | '__root__'
+    | '/login'
+    | '/quiz'
+    | '/quiz/list'
+    | '/quiz/$quizId/'
+    | '/quiz/leaderboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuizListRouteImport
       parentRoute: typeof QuizRoute
     }
+    '/quiz/leaderboard/': {
+      id: '/quiz/leaderboard/'
+      path: '/leaderboard'
+      fullPath: '/quiz/leaderboard/'
+      preLoaderRoute: typeof QuizLeaderboardIndexRouteImport
+      parentRoute: typeof QuizRoute
+    }
     '/quiz/$quizId/': {
       id: '/quiz/$quizId/'
       path: '/$quizId'
@@ -103,11 +130,13 @@ declare module '@tanstack/react-router' {
 interface QuizRouteChildren {
   QuizListRoute: typeof QuizListRoute
   QuizQuizIdIndexRoute: typeof QuizQuizIdIndexRoute
+  QuizLeaderboardIndexRoute: typeof QuizLeaderboardIndexRoute
 }
 
 const QuizRouteChildren: QuizRouteChildren = {
   QuizListRoute: QuizListRoute,
   QuizQuizIdIndexRoute: QuizQuizIdIndexRoute,
+  QuizLeaderboardIndexRoute: QuizLeaderboardIndexRoute,
 }
 
 const QuizRouteWithChildren = QuizRoute._addFileChildren(QuizRouteChildren)
