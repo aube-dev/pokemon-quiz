@@ -83,7 +83,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(fastifyScalar, {
         routePrefix: '/docs',
         configuration: {
-            theme: 'purple',
+            theme: 'deepSpace',
             darkMode: true,
         },
     })
