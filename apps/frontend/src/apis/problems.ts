@@ -116,7 +116,6 @@ export const api_createProblem = api.mutationApi<
     };
     category: string;
     content: QuizBlock[];
-    score: number;
     title: string;
   },
   {

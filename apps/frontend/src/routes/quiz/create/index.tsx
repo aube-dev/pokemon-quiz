@@ -216,7 +216,6 @@ function RouteComponent() {
             category,
             content,
             answer,
-            score: 10,
           });
         }}
       >
