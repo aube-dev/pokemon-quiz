@@ -90,11 +90,14 @@ export async function buildApp(): Promise<FastifyInstance> {
 
     // CORS 설정
     await app.register(fastifyCors, {
-        origin: true, // 모든 origin 허용 (개발 단계)
+        origin: [
+            'http://localhost:3000',           // 로컬 개발 환경
+            'https://pokemon-quiz-frontend.vercel.app' // Vercel 배포 환경
+        ],
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
-    })
+    });
 
     // Cookie 설정
     await app.register(fastifyCookie, {
