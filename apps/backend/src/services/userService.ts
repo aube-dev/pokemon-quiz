@@ -40,10 +40,24 @@ export class UserService {
     async getUserInfo(id: string) {
         return this.server.prisma.user.findUnique({
             where: { id },
-            include: {
+            select: {
+                id: true,
+                sn: true,
+                username: true,
+                totalScore: true,
+                createdAt: true,
+                updatedAt: true,
                 userProblems: {
-                    include: {
-                        problem: true,
+                    select: {
+                        status: true,
+                        score: true,
+                        challengedAt: true,
+                        submittedAt: true,
+                        problem: {
+                            select: {
+                                number: true,
+                            }
+                        }
                     },
                 },
             },
