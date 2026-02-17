@@ -16,7 +16,7 @@ import {
 } from "../errors";
 
 export class ProblemService {
-  constructor(private server: FastifyInstance) { }
+  constructor(private server: FastifyInstance) {}
 
   async getAllProblems(
     sortBy: "number" | "score" = "number",
@@ -136,10 +136,14 @@ export class ProblemService {
     });
 
     if (!attempt) throw new ChallengeRequired();
-    if (attempt.status !== ChallengeStatus.CHALLENGING) throw new ChallengeEnded();
+    if (attempt.status !== ChallengeStatus.CHALLENGING)
+      throw new ChallengeEnded();
 
-    const isCorrect = (attempt.problem.answer as unknown as QuizAnswer)?.correct === choice
-    const newStatus = isCorrect ? ChallengeStatus.CORRECT : ChallengeStatus.WRONG;
+    const isCorrect =
+      (attempt.problem.answer as unknown as QuizAnswer)?.correct === choice;
+    const newStatus = isCorrect
+      ? ChallengeStatus.CORRECT
+      : ChallengeStatus.WRONG;
 
     const result = await this.server.prisma.$transaction(async (tx) => {
       const solverCount = await tx.userProblem.count({
@@ -150,8 +154,12 @@ export class ProblemService {
       });
 
       const earnedScore = isCorrect
-        ? Math.round(attempt.problem.score * Math.max(0.3, 1 - solverCount / 100))
+        ? Math.round(100 * Math.max(0.3, 1 - solverCount / 100))
         : 0;
+
+      const nextScore = isCorrect
+        ? Math.round(100 * Math.max(0.3, 1 - (solverCount + 1) / 100))
+        : Math.round(100 * Math.max(0.3, 1 - solverCount / 100));
 
       const updatedUserProblem = await tx.userProblem.update({
         where: { id: attempt.id },
@@ -166,9 +174,9 @@ export class ProblemService {
         await tx.problem.update({
           where: { id: problemId },
           data: {
-            score: earnedScore
-          }
-        })
+            score: nextScore,
+          },
+        });
 
         await tx.user.update({
           where: { id: userId },

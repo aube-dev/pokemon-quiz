@@ -1,16 +1,21 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute } from "@tanstack/react-router";
 import { QuizListItem } from "./-components/QuizListItem";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { api_getProblems } from "@/apis/problems";
 import { Reorder } from "motion/react";
 import { useState } from "react";
+import { api_getMe } from "@/apis/users";
 
 export const Route = createFileRoute("/quiz/list")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { data: me } = useSuspenseQuery({
+    ...api_getMe.queryOptions(null),
+  });
+
   const { data: problems } = useQuery({
     ...api_getProblems.queryOptions(null),
     refetchInterval: 1000 * 5,
@@ -53,15 +58,23 @@ function RouteComponent() {
             .sort((a, b) =>
               tab === "score" ? a.score - b.score : a.number - b.number,
             )
-            .map((problem) => (
-              <QuizListItem
-                key={problem.number}
-                number={problem.number}
-                tags={[problem.tag]}
-                questionPreview={problem.title}
-                score={problem.score}
-              />
-            ))}
+            .map((problem) => {
+              const userProblem = me.userProblems.find(
+                (v) => v.problem.number === problem.number,
+              );
+
+              return (
+                <QuizListItem
+                  key={problem.number}
+                  number={problem.number}
+                  tags={[problem.tag]}
+                  questionPreview={problem.title}
+                  score={problem.score}
+                  status={userProblem?.status}
+                  earnedScore={userProblem?.score}
+                />
+              );
+            })}
         </Reorder.Group>
       </div>
     </div>

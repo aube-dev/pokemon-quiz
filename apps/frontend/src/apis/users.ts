@@ -2,8 +2,7 @@ import { queryKey } from "@/utils/api";
 import { api } from "./base";
 import { HttpMethod } from "@/constants/api";
 import type { UserId } from "@/types/users";
-import type { UserProblemId } from "@/types/userProblems";
-import type { ProblemId } from "@/types/problems";
+import type { ProblemNumber } from "@/types/problems";
 import type { UserProblemStatus } from "@/constants/userProblems";
 
 export const usersQueryKey = queryKey("users");
@@ -40,20 +39,13 @@ export const api_getMe = api.queryApi<
     createdAt: string;
     updatedAt: string;
     userProblems: {
-      id: UserProblemId;
-      userId: UserId;
-      problemId: ProblemId;
-      status: UserProblemStatus;
-      score: number;
-      challengedAt: string | null;
-      submittedAt: string | null;
+      challengedAt: string;
       problem: {
-        id: ProblemId;
-        number: number;
-        title: string;
-        category: string;
-        score: number;
+        number: ProblemNumber;
       };
+      score: number;
+      status: UserProblemStatus;
+      submittedAt: string | null;
     }[];
   }
 >({
