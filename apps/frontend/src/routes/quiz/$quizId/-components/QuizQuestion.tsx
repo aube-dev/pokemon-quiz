@@ -11,7 +11,11 @@ interface QuizQuestionProps {
 }
 
 const QuizQuestionTextBlock = ({ block }: { block: QuizBlockText }) => {
-  return <span className="text-base break-all">{block.content}</span>;
+  return (
+    <pre className="text-base whitespace-pre-wrap break-all">
+      {block.content}
+    </pre>
+  );
 };
 
 const QuizQuestionImageBlock = ({ block }: { block: QuizBlockImage }) => {

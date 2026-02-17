@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "shadcn:add": "shadcn add"
+    "shadcn:add": "shadcn add",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
