@@ -25,6 +25,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'none',
             maxAge: COOKIE_MAX_AGE,
+            partitioned: true,
         })
 
         return reply.send(user)
@@ -52,6 +53,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'none',
             maxAge: COOKIE_MAX_AGE,
+            partitioned: true,
         })
 
         return reply.send(user)
