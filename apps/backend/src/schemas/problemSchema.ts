@@ -127,11 +127,10 @@ export const createProblemSchema = {
     security: [{ bearerAuth: [] }],
     body: {
         type: 'object',
-        required: ['title', 'category', 'score', 'content', 'answer'],
+        required: ['title', 'category', 'content', 'answer'],
         properties: {
             title: { type: 'string', description: '문제 제목' },
             category: { type: 'string', description: '문제 카테고리' },
-            score: { type: 'number', description: '문제 배점' },
             content: {
                 type: 'array',
                 description: '문제 콘텐츠 구성 요소를 담은 배열',
@@ -173,7 +172,6 @@ export const createProblemSchema = {
                 number: { type: 'number', description: '생성된 문제 번호' },
                 title: { type: 'string', description: '문제 제목' },
                 category: { type: 'string', description: '문제 카테고리' },
-                score: { type: 'number', description: '문제 배점' },
             },
         },
     },
