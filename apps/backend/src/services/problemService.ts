@@ -162,14 +162,14 @@ export class ProblemService {
         },
       });
 
-      await tx.problem.update({
-        where: { id: problemId },
-        data: {
-          score: earnedScore
-        }
-      })
-
       if (isCorrect) {
+        await tx.problem.update({
+          where: { id: problemId },
+          data: {
+            score: earnedScore
+          }
+        })
+
         await tx.user.update({
           where: { id: userId },
           data: { totalScore: { increment: earnedScore } },
