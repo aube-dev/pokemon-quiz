@@ -92,7 +92,8 @@ export async function buildApp(): Promise<FastifyInstance> {
     await app.register(fastifyCors, {
         origin: [
             'http://localhost:3000',           // 로컬 개발 환경
-            'https://pokemon-quiz-frontend.vercel.app' // Vercel 배포 환경
+            'https://podong.site',
+            'https://www.podong.site'
         ],
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
         allowedHeaders: ['Content-Type', 'Authorization'],
