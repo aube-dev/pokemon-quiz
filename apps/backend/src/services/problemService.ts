@@ -150,7 +150,7 @@ export class ProblemService {
       });
 
       const earnedScore = isCorrect
-        ? Math.round(1000 * Math.max(0.3, 1 - solverCount / 100))
+        ? Math.round(attempt.problem.score * Math.max(0.3, 1 - solverCount / 100))
         : 0;
 
       const updatedUserProblem = await tx.userProblem.update({
