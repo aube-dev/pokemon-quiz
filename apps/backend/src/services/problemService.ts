@@ -16,7 +16,7 @@ import {
 } from "../errors";
 
 export class ProblemService {
-  constructor(private server: FastifyInstance) {}
+  constructor(private server: FastifyInstance) { }
 
   async getAllProblems(
     sortBy: "number" | "score" = "number",
@@ -89,6 +89,7 @@ export class ProblemService {
         ...dto,
         number: (lastProblem?.number || 0) + 1,
         title: encrypt(dto.title, ENCRYPTION_KEY),
+        score: 100,
         content: dto.content as any,
         answer: dto.answer as any,
       },
@@ -130,52 +131,48 @@ export class ProblemService {
     const { choice } = dto;
 
     const attempt = await this.server.prisma.userProblem.findUnique({
-      where: {
-        userId_problemId: {
-          userId,
-          problemId,
-        },
-      },
-      include: {
-        problem: true,
-      },
+      where: { userId_problemId: { userId, problemId } },
+      include: { problem: true },
     });
 
     if (!attempt) throw new ChallengeRequired();
-    if (attempt.status !== ChallengeStatus.CHALLENGING)
-      throw new ChallengeEnded();
+    if (attempt.status !== ChallengeStatus.CHALLENGING) throw new ChallengeEnded();
 
-    const isCorrect =
-      (attempt.problem.answer as unknown as QuizAnswer).correct === choice;
-    const newStatus: ChallengeStatus = isCorrect
-      ? ChallengeStatus.CORRECT
-      : ChallengeStatus.WRONG;
-    const earnedScore = isCorrect ? attempt.problem.score : 0;
+    const isCorrect = (attempt.problem.answer as unknown as QuizAnswer)?.correct === choice
+    const newStatus = isCorrect ? ChallengeStatus.CORRECT : ChallengeStatus.WRONG;
 
-    const updatedUserProblem = await this.server.prisma.userProblem.update({
-      where: { id: attempt.id },
-      data: {
-        status: newStatus,
-        score: earnedScore,
-        submittedAt: new Date(),
-      },
-    });
-
-    if (isCorrect) {
-      await this.server.prisma.user.update({
-        where: { id: userId },
-        data: {
-          totalScore: {
-            increment: earnedScore,
-          },
+    const result = await this.server.prisma.$transaction(async (tx) => {
+      const solverCount = await tx.userProblem.count({
+        where: {
+          problemId: attempt.problemId,
+          status: ChallengeStatus.CORRECT,
         },
       });
-    }
 
-    return {
-      ...updatedUserProblem,
-      isCorrect,
-    };
+      const earnedScore = isCorrect
+        ? Math.round(1000 * Math.max(0.3, 1 - solverCount / 100))
+        : 0;
+
+      const updatedUserProblem = await tx.userProblem.update({
+        where: { id: attempt.id },
+        data: {
+          status: newStatus,
+          submittedAt: new Date(),
+          ...(isCorrect && { score: earnedScore }),
+        },
+      });
+
+      if (isCorrect) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { totalScore: { increment: earnedScore } },
+        });
+      }
+
+      return updatedUserProblem;
+    });
+
+    return { ...result, isCorrect };
   }
 
   async giveUp(userId: string, problemId: string) {

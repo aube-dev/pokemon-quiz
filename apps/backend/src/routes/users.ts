@@ -23,7 +23,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             path: '/',
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: COOKIE_MAX_AGE,
         })
 
@@ -50,7 +50,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
             path: '/',
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: COOKIE_MAX_AGE,
         })
 
