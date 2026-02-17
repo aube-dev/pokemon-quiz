@@ -4,6 +4,10 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://pokemon-quiz-gbkq.onrender.com/api/:path*"
     }
   ]
 }
