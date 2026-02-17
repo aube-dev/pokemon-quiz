@@ -2,9 +2,7 @@ import { Api } from "@/core/api/Api";
 import { toast } from "sonner";
 
 export const api = new Api<{ error: string }>({
-  baseUrl: import.meta.env.PROD
-    ? "https://pokemon-quiz-gbkq.onrender.com"
-    : undefined,
+  baseUrl: undefined,
   hooks: {
     beforeServerError: (error) => {
       if (error.serverError) {
